@@ -1,6 +1,6 @@
-# sealevel
+# Sea level
 
-ASealevel rise vs population density. Two notebooks that combine the data and produce a bunch of images for further exploring.
+A Sealevel rise vs population density. Two notebooks that combine the data and produce a bunch of images for further exploring.
 
 You can see the thing in action at https://douwe.com/projects/sealevel
 
