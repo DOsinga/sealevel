@@ -1,0 +1,109 @@
+<script type="text/markdown" id="info">
+name: Sea Level Rise
+description: >
+  Combines population density with an elevation map to show how many people are at risk given a certain amount of sealevel rise. Obviously doesn't mean that the sea will rise that much, but it still shows you how coastal our species is.
+type: <class 'type'>
+github: sealevel
+</script>
+
+<script src="{{ static }}panzoom.min.js"></script>
+
+<style>
+.map-button {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    line-height: 20px;
+    font-size: 18px;
+    border: 1px solid #c5c5c5;
+    cursor: pointer;
+    background-color: grey;
+    text-align: center;
+    color: white;
+}
+
+.img-load {
+    position: absolute;
+    left: 272px;
+    top: 72px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    grid-gap: 20px;
+}
+
+.block {
+    flex: 1 1 auto;
+    max-width: 220px;
+    box-sizing: border-box;
+}
+
+.block img {
+    width: 216px;
+    height: 108px;
+    cursor: pointer;
+}
+
+</style>
+
+<P>
+    Click on the thumb-nails to see what the world map looks like given a certain amount of sealevel rise.
+    The color intensity shows population density, so it gets you an idea of how many people are at risk
+    given a certain value. You can zoom using the mouse wheel and drag the map around.
+</P>
+
+ <div class="parent" style="position: relative">
+        <div class="panzoom" id="panzoom-element">
+          <img src="{{ static }}elevation.png"
+               width="800" alt="world" id="map"
+               class="img_load media-container"
+          >
+        </div>
+     <span class="map-button" style="left: 10px; top: 10px;" id="plus">+</span>
+     <span class="map-button" style="left: 10px; top: 36px;" id="min">-</span>
+     <img src="{{ static }}loading.gif"
+          id="loader" alt="loading" width="256" height="256" class="img-load" style="display: none"/>
+ </div>
+
+<br/>
+
+<div class="container">
+    {% for po in people_under %}
+    <div class="block">
+        <img src="{{ po.thumb }}" alt="thumb" data-path="{{ po.path }}" class="thumb">
+        <p>{{ po.label }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.thumb').each(function () {
+            var $this = $(this);
+            $this.on("click", function () {
+                $('#map').attr('src', $(this).data('path'));
+                $('#loader').show();
+            });
+        });
+        $('#map').on('load', function () {
+            $('#loader').hide();
+        })
+        const elem = document.getElementById('panzoom-element');
+        const panzoom = Panzoom(elem, {
+            maxScale: 40,
+            minScale: 1,
+        });
+        elem.parentElement.addEventListener('wheel', panzoom.zoomWithWheel);
+        document.getElementById('plus').addEventListener('click', panzoom.zoomIn)
+        document.getElementById('min').addEventListener('click', panzoom.zoomOut)
+    })
+</script>
+<br/><br/>
+<p>
+    Sources: Elevation data is adapted from <a href="https://blog.mapbox.com/global-elevation-data-6689f1d0ba65">Mapbox</a>.
+    Population data comes from
+    <a href="https://sedac.ciesin.columbia.edu/data/set/gpw-v4-population-density-adjusted-to-2015-unwpp-country-totals-rev11/data-download">
+        Gridded Population of the World</a>. Zooming is done using <a href="https://timmywil.com/panzoom/">Panzoom</a>.
+</p>
